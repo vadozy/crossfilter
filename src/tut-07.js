@@ -19,34 +19,18 @@ console.log('--- 1 --- cf');
 const cf = Crossfilter(data);
 console.log(cf);
 
-const dimByTotalAndTip = cf.dimension(d => d.total + d.tip);
-console.log('--- 2 --- dim');
-console.log(dimByTotalAndTip);
 
-const groupByRoundedTotalAndTip = dimByTotalAndTip.group(v => 100 * Math.floor(v / 100));
-console.log('--- 3 --- group');
-console.log(groupByRoundedTotalAndTip);
-console.log(`groupByRoundedTotalAndTip.size() -> ${groupByRoundedTotalAndTip.size()}`);
-console.log(groupByRoundedTotalAndTip.top(10));
+const dimByTotalMinusTip = cf.dimension(d => d.total - d.tip);
+console.log('--- 2 --- dimByTotalMinusTip top(2)');
+console.log(dimByTotalMinusTip);
+console.log(dimByTotalMinusTip.top(2));
 
-groupByRoundedTotalAndTip.reduceSum(v => v.total + v.tip);
-console.log('--- 4 --- groupByRoundedTotalAndTip.reduceSum(...)');
-console.log(groupByRoundedTotalAndTip);
-console.log(`paymentGroups.size() -> ${groupByRoundedTotalAndTip.size()}`);
-console.log(groupByRoundedTotalAndTip.top(10));
 
-const reducer = side => {
-  return (p, v) => {
-    return p + side * (v.total + v.tip);
-  }
-}
-groupByRoundedTotalAndTip.reduce(reducer(1), reducer(-1), () => 0);
-console.log('--- 5 --- groupByRoundedTotalAndTip.reduce(...)');
-console.log(`paymentGroups.size() -> ${groupByRoundedTotalAndTip.size()}`);
-console.log(groupByRoundedTotalAndTip.top(10));
+console.log('--- 3 --- dimByTotalMinusTip.filter(d => d < 100) top(2)');
+dimByTotalMinusTip.filter(d => d < 100);
+console.log(dimByTotalMinusTip.top(Infinity).length);
+console.log(dimByTotalMinusTip.top(2));
 
-groupByRoundedTotalAndTip.reduceCount();
-console.log('--- 6 --- groupByRoundedTotalAndTip.reduceCount()');
-console.log(groupByRoundedTotalAndTip);
-console.log(`paymentGroups.size() -> ${groupByRoundedTotalAndTip.size()}`);
-console.log(groupByRoundedTotalAndTip.top(10));
+console.log('--- 4 --- cf.allFiltered()');
+console.log(cf.allFiltered().length);
+console.log(cf.allFiltered());
